@@ -7,6 +7,13 @@ on:
     paths-ignore:
       - '.github/**'
       - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      breaking-changes:
+        description: 'Reason'
+        required: true
+        default: 'Testing'
+        type: string
 
 jobs:
   utils-updated:
