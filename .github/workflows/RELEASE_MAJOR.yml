@@ -1,9 +1,28 @@
 name: Create Major Release
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
+    inputs:
+      changes:
+        description: 'Body of the release'
+        required: true
+        default: |
+          'Removed features:'
+          '-  f1'
+          '-  f2'
+          ''
+          'Added features:'
+          '-  f3'
+          '-  f4'
+          ''
+          'Fixed issues:'
+          '-  i1'
+          '-  i2'
+          ''
+          'Breaking changes:'
+          '-  b1'
+          '-  b2'
+        type: string
 
 jobs:
   create-major-release:
@@ -23,3 +42,14 @@ jobs:
         with:
           tag: ${{ steps.bump-semver.outputs.new_version }}
           message: 'New version: ${{ steps.bump-semver.outputs.new_version }}'
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: v${{ steps.bump-semver.outputs.new_version }}
+          release_name: Release v${{ steps.bump-semver.outputs.new_version }}
+          body: ${{ github.event.inputs.changes }}
+          draft: false
+          prerelease: false

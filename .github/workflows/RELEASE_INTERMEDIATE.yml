@@ -20,7 +20,6 @@ jobs:
         run: |
           version_bump="none"
 
-          echo "Getting file changes..."
           git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
 
           pattern="^[A-Z]\s+"
@@ -30,10 +29,10 @@ jobs:
           done < <(grep -E $pattern git_diff_tree.txt)
 
           if [ ${#array_variable[@]} -eq 0 ]; then
-            echo "No changes detected."
+            echo "No changes detected to utils, skip creating release."
             echo "are-updated=false" >> "$GITHUB_OUTPUT"
           else
-            echo "Changes detected."
+            echo "Changes detected to utils, creating release."
             echo "are-updated=true" >> "$GITHUB_OUTPUT"
           fi
 
@@ -52,7 +51,7 @@ jobs:
           echo "Getting file changes..."
           git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
 
-          pattern="^[A-Z]\s+(?!(\.github))"
+          pattern="^[A-Z]\s+"
           array_variable=()
           while IFS= read -r line; do
               array_variable+=("$line")
@@ -90,7 +89,7 @@ jobs:
         id: echo-bump-level
         run: |
           # Echo the bump level to the console
-          echo "Bump level: ${{ steps.determine-bump-level.outputs.version-bump }}"
+          echo "Version bump: ${{ steps.determine-bump-level.outputs.version-bump }}"
         # Get the latest version tag
       - uses: actions-ecosystem/action-get-latest-tag@v1
         id: get-latest-tag
@@ -103,3 +102,14 @@ jobs:
         with:
           tag: ${{ steps.bump-semver.outputs.new_version }}
           message: "New version: ${{ steps.bump-semver.outputs.new_version }}"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: v${{ steps.bump-semver.outputs.new_version }}
+          release_name: Release v${{ steps.bump-semver.outputs.new_version }}
+          body: ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: true
