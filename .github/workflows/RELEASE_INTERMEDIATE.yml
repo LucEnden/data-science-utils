@@ -6,58 +6,82 @@ on:
       - main
 
 jobs:
-  create-intermediate-release:
+  utils-updated:
     runs-on: ubuntu-latest
+    outputs:
+      are-updated: ${{ steps.utils-updated.outputs.are-updated }}
     steps:
-        # Checkout the repository
+      - name: Check if utils are updated
+        id: utils-updated
+        run: |
+          version_bump="none"
+
+          echo "Getting file changes..."
+          git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
+
+          pattern="^[A-Z]\s+(?!(\.github))"
+          array_variable=()
+          while IFS= read -r line; do
+            array_variable+=("$line")
+          done < <(grep -E $pattern git_diff_tree.txt)
+
+          if [ ${#array_variable[@]} -eq 0 ]; then
+            echo "No changes detected."
+            echo "are-updated=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changes detected."
+            echo "are-updated=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  create-intermediate-release:
+    needs: utils-updated
+    runs-on: ubuntu-latest
+    if: needs.utils-updated.outputs.are-updated == 'true'
+    steps:
+      # Checkout the repository
       - uses: actions/checkout@v2
       - name: Determine bump level
         id: determine-bump-level
         run: |
-            version_bump="patch"
+          version_bump="none"
 
-            echo "Getting file changes..."
-            git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
-        
-            pattern="^[A-Z]\s+(?!(\.github))"
-            array_variable=()
-            while IFS= read -r line; do
-                array_variable+=("$line")
-            done < <(grep -E $pattern git_diff_tree.txt)
-            
-            if [ ${#array_variable[@]} -eq 0 ]; then
-                echo "No changes detected."
-            else
-                echo "Changes detected."
-                for element in "${array_variable[@]}"; do
-                    # Check if element starts with
-                    # Added (A),
-                    # Copied (C),
-                    # Deleted (D),
-                    # Modified (M),
-                    # Renamed (R),
-                    # have their type changed (T),
-                    # Unmerged (U),
-                    # Unknown (X),
-                    # or have had their pairing Broken (B).
+          echo "Getting file changes..."
+          git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
 
-                    # We detirmine the level of the bump based on the following:
-                        # If the push contains changes to the file structure, we bump the minor version
-                        # Else we bump the patch version
-                    if echo "$element" | grep -q "^[ADRT]"; then
-                        $version_bump = "minor"
-                        break
-                    fi
-                done
+          pattern="^[A-Z]\s+(?!(\.github))"
+          array_variable=()
+          while IFS= read -r line; do
+              array_variable+=("$line")
+          done < <(grep -E $pattern git_diff_tree.txt)
+
+          for element in "${array_variable[@]}"; do
+            # Check if element starts with
+            # Added (A),
+            # Copied (C),
+            # Deleted (D),
+            # Modified (M),
+            # Renamed (R),
+            # have their type changed (T),
+            # Unmerged (U),
+            # Unknown (X),
+            # or have had their pairing Broken (B).
+
+            # We detirmine the level of the bump based on the following:
+                # If the push contains changes to the file structure, we bump the minor version
+                # Else we bump the patch version
+            if echo "$element" | grep -q "^[ADRT]"; then
+                $version_bump = "minor"
+                break
             fi
-                    
-            if [[ $version_bump == "patch" ]]; then
-                echo "Bumping patch version."
-            else
-                echo "Bumping minor version."
-            fi
+          done
+                  
+          if [[ $version_bump == "patch" ]]; then
+              echo "Bumping patch version."
+          else
+              echo "Bumping minor version."
+          fi
 
-            echo "version-bump=$version_bump" >> "$GITHUB_OUTPUT"
+          echo "version-bump=$version_bump" >> "$GITHUB_OUTPUT"
       - name: Echo the bump level
         id: echo-bump-level
         run: |
@@ -74,4 +98,4 @@ jobs:
       - uses: actions-ecosystem/action-push-tag@v1
         with:
           tag: ${{ steps.bump-semver.outputs.new_version }}
-          message: 'New version: ${{ steps.bump-semver.outputs.new_version }}'
+          message: "New version: ${{ steps.bump-semver.outputs.new_version }}"
