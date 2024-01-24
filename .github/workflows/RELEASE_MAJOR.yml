@@ -3,25 +3,20 @@ name: Create Major Release
 on:
   workflow_dispatch:
     inputs:
-      changes:
-        description: 'Body of the release'
+      breaking-changes:
+        description: 'Breaking changes'
         required: true
-        default: |
-          'Removed features:'
-          '-  f1'
-          '-  f2'
-          ''
-          'Added features:'
-          '-  f3'
-          '-  f4'
-          ''
-          'Fixed issues:'
-          '-  i1'
-          '-  i2'
-          ''
-          'Breaking changes:'
-          '-  b1'
-          '-  b2'
+        default: 'N/A'
+        type: string
+      new-features:
+        description: 'New features'
+        required: true
+        default: 'N/A'
+        type: string
+      fixed-issues:
+        description: 'Fixed issues'
+        required: true
+        default: 'N/A'
         type: string
 
 jobs:
@@ -50,6 +45,14 @@ jobs:
         with:
           tag_name: v${{ steps.bump-semver.outputs.new_version }}
           release_name: Release v${{ steps.bump-semver.outputs.new_version }}
-          body: ${{ github.event.inputs.changes }}
+          body: |
+            Breaking changes:
+            ${{ github.event.inputs.breaking-changes }}
+
+            New features:
+            ${{ github.event.inputs.new-features }}
+            
+            Fixed issues:
+            ${{ github.event.inputs.fixed-issues }}
           draft: false
           prerelease: false
