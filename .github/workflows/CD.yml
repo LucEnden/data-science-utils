@@ -1,66 +1,45 @@
-name: Release Workflow
+name: Create Release
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   release:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Git
-        run: git config --local user.email "action@github.com" && git config --local user.name "GitHub Action"
-
-      - name: Determine Version Bump
-        id: determine_version
+        # Checkout the repository
+      - uses: actions/checkout@v2
+        # Get the latest versoin tag
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+        # Bump the version
+        # We detirmine the level of the bump based on the following:
+          # If the push contains changes to existing files, we bump the patch version
+          # If the push contains new files, we bump the minor version
+          # If the push contains a manually added tag (regardless of its contents), we bump the major version
+      - name: Determine bump level
+        id: determine-bump-level
         run: |
-          current_version=$(git tag --sort=-version:refname | head -n 1)
-          files_changed=$(git diff --name-only $current_version HEAD)
-          
-          if [[ -z "$files_changed" ]]; then
-            version_bump="patch"
+          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -q '^[^/]*$'; then
+            echo "::set-output name=level::patch"
+          elif git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -q '/'; then
+            echo "::set-output name=level::minor"
           else
-            version_bump="minor"
+            echo "::set-output name=level::major"
           fi
-
-          if [[ $(git log --merges -n 1 --pretty=format:%B) == *"[major]"* ]]; then
-            version_bump="major"
-          fi
-
-          echo "Version bump: $version_bump"
-          echo "::set-output name=version_bump::$version_bump"
-
-      - name: Bump Version
-        id: version_bump
+      - name: Echo the bump level
+        id: echo-bump-level
         run: |
-          current_version=$(git tag --sort=-version:refname | head -n 1)
-          echo "Current version: $current_version"
-
-          if [[ "${{ steps.determine_version.outputs.version_bump }}" == "major" ]]; then
-            new_version=$(semver -i major $current_version)
-          elif [[ "${{ steps.determine_version.outputs.version_bump }}" == "minor" ]]; then
-            new_version=$(semver -i minor $current_version)
-          else
-            new_version=$(semver -i patch $current_version)
-          fi
-
-          echo "New version: $new_version"
-          echo "::set-output name=new_version::$new_version"
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: v${{ steps.version_bump.outputs.new_version }}
-          release_name: Release ${{ steps.version_bump.outputs.new_version }}
-          body: |
-            Changes in this release:
-            - ...
-
-      - name: Push new tag
-        run: git push origin "refs/tags/v${{ steps.version_bump.outputs.new_version }}"
+          # Echo the bump level to the console
+          echo "Bump level: ${{ steps.determine-bump-level.outputs.level }}"
+      #- uses: actions-ecosystem/action-bump-semver@v1
+      #  id: bump-semver
+      #  with:
+      #    current_version: ${{ steps.get-latest-tag.outputs.tag }}
+      #    level: minor
+      #- uses: actions-ecosystem/action-push-tag@v1
+      #  with:
+      #    tag: ${{ steps.bump-semver.outputs.new_version }}
+      #    message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
