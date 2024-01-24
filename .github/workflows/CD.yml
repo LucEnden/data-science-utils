@@ -1,0 +1,66 @@
+name: Release Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: git config --local user.email "action@github.com" && git config --local user.name "GitHub Action"
+
+      - name: Determine Version Bump
+        id: determine_version
+        run: |
+          current_version=$(git tag --sort=-version:refname | head -n 1)
+          files_changed=$(git diff --name-only $current_version HEAD)
+          
+          if [[ -z "$files_changed" ]]; then
+            version_bump="patch"
+          else
+            version_bump="minor"
+          fi
+
+          if [[ $(git log --merges -n 1 --pretty=format:%B) == *"[major]"* ]]; then
+            version_bump="major"
+          fi
+
+          echo "Version bump: $version_bump"
+          echo "::set-output name=version_bump::$version_bump"
+
+      - name: Bump Version
+        id: version_bump
+        run: |
+          current_version=$(git tag --sort=-version:refname | head -n 1)
+          echo "Current version: $current_version"
+
+          if [[ "${{ steps.determine_version.outputs.version_bump }}" == "major" ]]; then
+            new_version=$(semver -i major $current_version)
+          elif [[ "${{ steps.determine_version.outputs.version_bump }}" == "minor" ]]; then
+            new_version=$(semver -i minor $current_version)
+          else
+            new_version=$(semver -i patch $current_version)
+          fi
+
+          echo "New version: $new_version"
+          echo "::set-output name=new_version::$new_version"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ steps.version_bump.outputs.new_version }}
+          release_name: Release ${{ steps.version_bump.outputs.new_version }}
+          body: |
+            Changes in this release:
+            - ...
+
+      - name: Push new tag
+        run: git push origin "refs/tags/v${{ steps.version_bump.outputs.new_version }}"
