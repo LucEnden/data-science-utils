@@ -16,39 +16,38 @@ on:
         type: string
 
 jobs:
-  utils-updated:
-    runs-on: ubuntu-latest
-    outputs:
-      are-updated: ${{ steps.utils-updated.outputs.are-updated }}
-    steps:
-      # Checkout the repository
-      - uses: actions/checkout@v2
-      - name: Check if utils are updated
-        id: utils-updated
-        run: |
-          version_bump="none"
+#   utils-updated:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       are-updated: ${{ steps.utils-updated.outputs.are-updated }}
+#     steps:
+#       # Checkout the repository
+#       - uses: actions/checkout@v2
+#       - name: Check if utils are updated
+#         id: utils-updated
+#         run: |
+#           version_bump="none"
 
-          git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
-          cat git_diff_tree.txt
+#           git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
+#           cat git_diff_tree.txt
 
-          pattern="^[A-Z]\s+"
-          array_variable=()
-          while IFS= read -r line; do
-            array_variable+=("$line")
-          done < <(grep -E $pattern git_diff_tree.txt)
+#           pattern="^[A-Z]\s+"
+#           array_variable=()
+#           while IFS= read -r line; do
+#             array_variable+=("$line")
+#           done < <(grep -E $pattern git_diff_tree.txt)
 
-          if [ ${#array_variable[@]} -eq 0 ]; then
-            echo "No changes detected to utils, skip creating release."
-            echo "are-updated=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Changes detected to utils, creating release."
-            echo "are-updated=true" >> "$GITHUB_OUTPUT"
-          fi
-
+#           if [ ${#array_variable[@]} -eq 0 ]; then
+#             echo "No changes detected to utils, skip creating release."
+#             echo "are-updated=false" >> "$GITHUB_OUTPUT"
+#           else
+#             echo "Changes detected to utils, creating release."
+#             echo "are-updated=true" >> "$GITHUB_OUTPUT"
+#           fi
   create-intermediate-release:
-    needs: utils-updated
+    # needs: utils-updated
     runs-on: ubuntu-latest
-    if: needs.utils-updated.outputs.are-updated == 'true'
+    # if: needs.utils-updated.outputs.are-updated == 'true'
     steps:
       # Checkout the repository
       - uses: actions/checkout@v2
