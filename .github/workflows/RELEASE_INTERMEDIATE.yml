@@ -22,6 +22,7 @@ jobs:
           version_bump="none"
 
           git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
+          cat git_diff_tree.txt
 
           pattern="^[A-Z]\s+"
           array_variable=()
