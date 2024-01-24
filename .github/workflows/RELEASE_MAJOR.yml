@@ -18,6 +18,11 @@ on:
         required: true
         default: 'N/A'
         type: string
+      other-changes:
+        description: 'Other changes'
+        required: true
+        default: 'N/A'
+        type: string
 
 jobs:
   create-major-release:
@@ -44,15 +49,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: v${{ steps.bump-semver.outputs.new_version }}
-          release_name: Release v${{ steps.bump-semver.outputs.new_version }}
+          release_name: Release ${{ steps.bump-semver.outputs.new_version }}
           body: |
             Breaking changes:
             ${{ github.event.inputs.breaking-changes }}
 
             New features:
             ${{ github.event.inputs.new-features }}
-            
+
             Fixed issues:
             ${{ github.event.inputs.fixed-issues }}
+
+            Other changes:
+            ${{ github.event.inputs.other-changes }}
           draft: false
           prerelease: false
