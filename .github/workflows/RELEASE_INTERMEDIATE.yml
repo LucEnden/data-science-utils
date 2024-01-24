@@ -17,7 +17,7 @@ jobs:
             version_bump="patch"
 
             echo "Getting file changes..."
-            git diff-tree --no-commit-id --name-status -r 6ffa465 > git_diff_tree.txt
+            git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
         
             pattern="^[A-Z]\s+(?!(\.github))"
             array_variable=()
