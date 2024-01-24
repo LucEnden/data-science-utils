@@ -11,6 +11,8 @@ jobs:
     outputs:
       are-updated: ${{ steps.utils-updated.outputs.are-updated }}
     steps:
+      # Checkout the repository
+      - uses: actions/checkout@v2
       - name: Check if utils are updated
         id: utils-updated
         run: |
