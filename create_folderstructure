@@ -102,5 +102,6 @@ echo ""
 # rm -rf $ARTEFACTS_DIR
 # rm -rf $EXPERIMENTS_DIR
 
+
 echo "Folder structure created successfully."
 echo "Happy coding!"
