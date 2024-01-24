@@ -1,3 +1,5 @@
 README.* export-ignore
 .github export-ignore
 docs export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
