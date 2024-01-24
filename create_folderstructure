@@ -19,8 +19,15 @@ do
     esac
 done
 
+# Check if project root is empty
 if [ -z "$PROJECT_ROOT" ]; then
-    echo "Project root is empty. Please use the -r flag to set the project root."
+    echo "Project root is empty. Please use the following: -r 'some_directory'"
+    exit 1
+fi
+# Check if project root exists
+if [ ! -d "$PROJECT_ROOT" ]; then
+    echo "Project root either does not exist or is not a directory. Please use an existing directory."
+    echo "You entered: $PROJECT_ROOT"
     exit 1
 fi
 
