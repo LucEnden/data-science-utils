@@ -16,46 +16,14 @@ on:
         type: string
 
 jobs:
-#   utils-updated:
-#     runs-on: ubuntu-latest
-#     outputs:
-#       are-updated: ${{ steps.utils-updated.outputs.are-updated }}
-#     steps:
-#       # Checkout the repository
-#       - uses: actions/checkout@v2
-#       - name: Check if utils are updated
-#         id: utils-updated
-#         run: |
-#           version_bump="none"
-
-#           git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
-#           cat git_diff_tree.txt
-
-#           pattern="^[A-Z]\s+"
-#           array_variable=()
-#           while IFS= read -r line; do
-#             array_variable+=("$line")
-#           done < <(grep -E $pattern git_diff_tree.txt)
-
-#           if [ ${#array_variable[@]} -eq 0 ]; then
-#             echo "No changes detected to utils, skip creating release."
-#             echo "are-updated=false" >> "$GITHUB_OUTPUT"
-#           else
-#             echo "Changes detected to utils, creating release."
-#             echo "are-updated=true" >> "$GITHUB_OUTPUT"
-#           fi
   create-intermediate-release:
-    # needs: utils-updated
     runs-on: ubuntu-latest
-    # if: needs.utils-updated.outputs.are-updated == 'true'
     steps:
       # Checkout the repository
       - uses: actions/checkout@v2
       - name: Determine bump level
         id: determine-bump-level
         run: |
-          version_bump="none"
-
           echo "Getting file changes..."
           git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
 
@@ -65,6 +33,7 @@ jobs:
               array_variable+=("$line")
           done < <(grep -E $pattern git_diff_tree.txt)
 
+          version_bump="patch"
           for element in "${array_variable[@]}"; do
             # Check if element starts with
             # Added (A),
@@ -85,19 +54,14 @@ jobs:
                 break
             fi
           done
-                  
-          if [[ $version_bump == "patch" ]]; then
-              echo "Bumping patch version."
-          else
-              echo "Bumping minor version."
-          fi
 
+          echo "Bumping $version_bump version..."
           echo "version-bump=$version_bump" >> "$GITHUB_OUTPUT"
       - name: Echo the bump level
         id: echo-bump-level
         run: |
           # Echo the bump level to the console
-          echo "Version bump: ${{ steps.determine-bump-level.outputs.version-bump }}"
+          echo "New version: ${{ steps.determine-bump-level.outputs.version-bump }}"
         # Get the latest version tag
       - uses: actions-ecosystem/action-get-latest-tag@v1
         id: get-latest-tag
