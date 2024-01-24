@@ -1,0 +1,34 @@
+#!/bin/bash
+source internals
+
+dsutils_get_project_root -r $1
+
+# ================== Set up environment variables =======================
+# rm -f .dsutils.env
+ENV_FILE=".dsutils.env"
+if [ -f $ENV_FILE ]; then
+    dsutils_error "'$ENV_FILE' already exists." "It seems that '$ENV_FILE' already exists." "This probably means that '$( basename "$0" )' has already been called."  "Running '$( basename "$0" )' twice is not recommended."
+    exit 1
+fi
+
+touch $ENV_FILE
+echo "PROJECT_ROOT='$PROJECT_ROOT'" >> $ENV_FILE
+
+# ================== Update the gitignore file of the project root =======================
+if [ ! -f $PROJECT_ROOT/.gitignore ]; then
+    echo "Gitignore file does not exist for project $PROJECT_ROOT. Creating one."
+    touch $PROJECT_ROOT/.gitignore
+fi
+
+echo "Updating gitignore file for project $PROJECT_ROOT."
+echo "" >> $PROJECT_ROOT/.gitignore
+echo "#=====# Added by dsutils #=====#" >> $PROJECT_ROOT/.gitignore
+echo ".dsutils/**/*" >> $PROJECT_ROOT/.gitignore
+echo "#=====# End of dsutils #=====#" >> $PROJECT_ROOT/.gitignore
+echo "" >> $PROJECT_ROOT/.gitignore
+
+# ================== Call other scripts =======================
+# ./create_folderstructure -r $PROJECT_ROOT
+
+echo "Done."
+exit 0

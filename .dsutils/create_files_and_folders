@@ -1,4 +1,9 @@
 #!/bin/bash
+source internals
+
+dsutils_get_project_root -r $1
+
+# ================== Explanation =======================
 
 # Create folder structure for the project
 # The structure is as follows:
@@ -9,28 +14,6 @@
 #       - processed
 #       - raw
 #   - experiments
-
-
-PROJECT_ROOT=""
-while getopts r: flag
-do
-    case "${flag}" in
-        r) PROJECT_ROOT=${OPTARG};;
-    esac
-done
-
-# Check if project root is empty
-if [ -z "$PROJECT_ROOT" ]; then
-    echo "Project root is empty. Please use the following: -r 'some_directory'"
-    exit 1
-fi
-# Check if project root exists
-if [ ! -d "$PROJECT_ROOT" ]; then
-    echo "Project root either does not exist or is not a directory. Please use an existing directory."
-    echo "You entered: $PROJECT_ROOT"
-    exit 1
-fi
-
 
 # ================== Varialbes: =======================
 ARTEFACTS_DIR="$PROJECT_ROOT/artefacts"
@@ -97,11 +80,10 @@ fi
 echo ""
 #=================================================
 
-#remove all created files and folders, for testing purposes
+#remove all created files and folders for testing purposes
 # rm -rf $DATA_DIR
 # rm -rf $ARTEFACTS_DIR
 # rm -rf $EXPERIMENTS_DIR
 
 
-echo "Folder structure created successfully."
-echo "Happy coding!"
+log "Folder structure created successfully."

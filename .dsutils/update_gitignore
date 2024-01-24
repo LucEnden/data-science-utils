@@ -1,0 +1,4 @@
+#!/bin/bash
+source internals
+
+dsutils_get_project_root -r $1
