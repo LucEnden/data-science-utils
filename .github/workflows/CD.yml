@@ -19,6 +19,9 @@ jobs:
           # If the push contains changes to existing files, we bump the patch version
           # If the push contains new files, we bump the minor version
           # If the push contains a manually added tag (regardless of its contents), we bump the major version
+
+        # The code is based on the following sources:
+        # https://stackoverflow.com/questions/24803627/get-a-list-of-changed-files-and-their-status-for-a-specific-git-commit#answer-24819616
       - name: Determine bump level
         id: determine-bump-level
         run: |
