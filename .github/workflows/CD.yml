@@ -17,7 +17,7 @@ jobs:
         # Bump the version
         # We detirmine the level of the bump based on the following:
           # If the push contains changes to existing files, we bump the patch version
-          # If the push contains new files, we bump the minor version
+          # If the push contains files that are: New, Removed or Renamed, we bump the minor version
           # If the push contains a manually added tag (regardless of its contents), we bump the major version
 
         # The code is based on the following sources:
