@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '.github/**'
 
 jobs:
   utils-updated:
@@ -21,7 +23,7 @@ jobs:
           echo "Getting file changes..."
           git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
 
-          pattern="^[A-Z]\s+(?!(\.github))"
+          pattern="^[A-Z]\s+"
           array_variable=()
           while IFS= read -r line; do
             array_variable+=("$line")
