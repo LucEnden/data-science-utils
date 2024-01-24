@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Create folder structure for the project
+# The structure is as follows:
+#   - artefacts
+#       - artefacts.py
+#   - data
+#       - refrence.csv
+#       - processed
+#       - raw
+#   - experiments
+
+
+PROJECT_ROOT=""
+while getopts r: flag
+do
+    case "${flag}" in
+        r) PROJECT_ROOT=${OPTARG};;
+    esac
+done
+
+if [ -z "$PROJECT_ROOT" ]; then
+    echo "Project root is empty. Please use the -r flag to set the project root."
+    exit 1
+fi
+
+
+# ================== Varialbes: =======================
+ARTEFACTS_DIR="$PROJECT_ROOT/artefacts"
+ARTEFACTS_FILE="$ARTEFACTS_DIR/artefacts.py"
+
+DATA_DIR="$PROJECT_ROOT/data"
+DATA_PROCESSED_DIR="$DATA_DIR/processed"
+DATA_RAW_DIR="$DATA_DIR/raw"
+DATA_REFRENCE_FILE="$DATA_DIR/refrence.csv"
+
+EXPERIMENTS_DIR="$PROJECT_ROOT/experiments"
+#=======================================================
+
+echo "Root: $PROJECT_ROOT"
+echo "|"
+
+#================ Artefacts: ====================
+echo "+---/ artefacts"
+if [ ! -d $ARTEFACTS_DIR ]; then
+    mkdir $ARTEFACTS_DIR
+fi
+
+echo "|   |    artefacts.py"
+if [ ! -f $ARTEFACTS_FILE ]; then
+    touch $ARTEFACTS_FILE
+fi
+
+echo "|"
+#=================================================
+
+
+#================ Data: ==========================
+echo "+---/ data"
+if [ ! -d $DATA_DIR ]; then
+    mkdir $DATA_DIR
+fi
+
+echo "|   |    refrence.csv"
+if [ ! -f $DATA_REFRENCE_FILE ]; then
+    touch $DATA_REFRENCE_FILE
+    echo "id,name,description,citation" >> $DATA_REFRENCE_FILE
+fi
+
+echo "|   +--- processed"
+if [ ! -d $DATA_PROCESSED_DIR ]; then
+    mkdir $DATA_PROCESSED_DIR
+fi
+
+echo "|   +--- raw"
+if [ ! -d $DATA_RAW_DIR ]; then
+    mkdir $DATA_RAW_DIR
+fi
+
+echo "|"
+#=================================================
+
+
+#================ Experiments: ===================
+echo "+---/ experiments"
+if [ ! -d $EXPERIMENTS_DIR ]; then
+    mkdir $EXPERIMENTS_DIR
+fi
+
+echo ""
+#=================================================
+
+#remove all created files and folders, for testing purposes
+# rm -rf $DATA_DIR
+# rm -rf $ARTEFACTS_DIR
+# rm -rf $EXPERIMENTS_DIR
+
+echo "Folder structure created successfully."
+echo "Happy coding!"
