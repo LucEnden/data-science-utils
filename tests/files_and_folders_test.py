@@ -1,14 +1,13 @@
 import unittest
 import json
+import os
 
 
 class TestFilesAndFoldersEntries(unittest.TestCase):
-    def setUp(self) -> None:
-        self.json_file = 'files_and_folders.json'
-        with open(self.json_file, 'r') as file:
+    def setUp(self):
+        json_file_path = os.path.abspath(__file__ + '/../../.dsutils/files_and_folders.json')
+        with open(json_file_path, 'r') as file:
             self.files_and_folders = json.load(file)
-        
-        return super().setUp()
     
     def test_all_entries_have_entries(self):
         for f in self.files_and_folders:
