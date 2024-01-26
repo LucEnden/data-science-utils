@@ -24,39 +24,43 @@ jobs:
       - name: Determine bump level
         id: determine-bump-level
         run: |
-          echo "Getting file changes..."
-          git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
+            echo "Getting file changes..."
+            git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
+            
+            pattern="^[A-Z]\s+"
+            array_variable=()
+            while IFS= read -r line; do
+                array_variable+=("$line")
+            done < <(grep -E $pattern git_diff_tree.txt)
+            
+            version_bump="patch"
+            for element in "${array_variable[@]}"; do
+                # echo "$element"
 
-          pattern="^[A-Z]\s+"
-          array_variable=()
-          while IFS= read -r line; do
-              array_variable+=("$line")
-          done < <(grep -E $pattern git_diff_tree.txt)
+                # Element can start with one of the following letters:
+                    # Added (A),
+                    # Copied (C),
+                    # Deleted (D),
+                    # Modified (M),
+                    # Renamed (R),
+                    # have their type changed (T),
+                    # Unmerged (U),
+                    # Unknown (X),
+                    # or have had their pairing Broken (B).
 
-          version_bump="patch"
-          for element in "${array_variable[@]}"; do
-            # Check if element starts with
-            # Added (A),
-            # Copied (C),
-            # Deleted (D),
-            # Modified (M),
-            # Renamed (R),
-            # have their type changed (T),
-            # Unmerged (U),
-            # Unknown (X),
-            # or have had their pairing Broken (B).
-
-            # We detirmine the level of the bump based on the following:
-                # If the push contains changes to the file structure, we bump the minor version
-                # Else we bump the patch version
-            if echo "$element" | grep -q "^[ADRT]"; then
-                $version_bump = "minor"
-                break
-            fi
-          done
-
-          echo "Bumping $version_bump version..."
-          echo "version-bump=$version_bump" >> "$GITHUB_OUTPUT"
+                # We detirmine the level of the bump based on the following:
+                    # If the push contains changes to the file structure, we bump the minor version
+                        # That is, if starts with any of the following letters: A, D, R, T
+                    # Else we bump the patch version
+            
+                if echo "$element" | grep -q "^[ADRT]"; then
+                    version_bump="minor"
+                    break
+                fi
+            done
+            
+            echo "Bumping $version_bump version..."
+            echo "version-bump=$version_bump" >> "$GITHUB_OUTPUT"
       - name: Echo the bump level
         id: echo-bump-level
         run: |
