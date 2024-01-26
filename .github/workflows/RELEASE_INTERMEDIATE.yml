@@ -35,7 +35,7 @@ jobs:
             
             version_bump="patch"
             for element in "${array_variable[@]}"; do
-                # echo "$element"
+                echo "$element"
 
                 # Element can start with one of the following letters:
                     # Added (A),
