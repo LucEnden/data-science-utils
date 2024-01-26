@@ -169,3 +169,4 @@ artefacts/
 data/
 experiments/
 .dsutils/.dsutils.env
+sources.csv

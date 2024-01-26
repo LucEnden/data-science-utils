@@ -1,0 +1,39 @@
+{
+    "artefacts": {
+        "path": "/artefacts",
+        "isFile": false,
+        "fileContents": ""
+    },
+    "artefacts.py": {
+        "path": "/artefacts/artefacts.py",
+        "isFile": true,
+        "fileContents": ""
+    },
+    "data": {
+        "path": "/data",
+        "isFile": false,
+        "fileContents": ""
+    },
+    "processed": {
+        "path": "/data/processed",
+        "isFile": false,
+        "fileContents": ""
+    },
+    "raw": {
+        "path": "/data/raw",
+        "isFile": false,
+        "fileContents": ""
+    },
+    "experiments": {
+        "path": "/experiments",
+        "isFile": false,
+        "fileContents": ""
+    },
+    "sources.csv": {
+        "path": "/sources.csv",
+        "isFile": true,
+        "fileContents": [
+            "id,name,type,description,url,citation"
+        ]
+    }
+}
