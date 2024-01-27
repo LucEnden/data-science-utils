@@ -1,4 +1,8 @@
-from internals import *
+print(__name__)
+if __name__ == "__main__":
+    from internals import *
+else:
+    from .internals import *
 import os
 import json
 
@@ -46,7 +50,7 @@ def __remove_files_and_folders__(project_root: str | None = None):
 
     Warning
     -------
-    This function is not meant to be called by the user. It is only meant to be called by the `__main__` function of this script or by the `dsutils_init` function in the `init.py` file.
+    This function is not meant to be called by the user. It is only meant to be called by the `__main__` function of this script or in the `dsutils/setup.py` file.
     Use at your own risk.
     """
     if project_root is None:

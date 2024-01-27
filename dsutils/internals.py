@@ -198,8 +198,8 @@ def dsutils_read_env(project_root: str = os.getcwd()):
     env = project_root + ENV_FILE.replace("/", os.sep)
     if not os.path.isfile(env):
         dsutils_error("Environment file does not exist.")
-        dsutils_error("This probably means that DSUtils has not been initialized for this project.")
-        dsutils_error("Please run the DSUtils initialization script before continuing.")
+        dsutils_error("This probably means that DSUtils has not been setup for this project.")
+        dsutils_error("Please run the DSUtils setup script before continuing.")
         dsutils_error("Exiting...")
         sys.exit(1)
 
@@ -352,8 +352,8 @@ def dsutils_get_sources_file_content():
 
     if not os.path.isfile(sources_file):
         dsutils_error(f"Sources file does not exist: {sources_file}")
-        dsutils_error("This probably means that DSUtils has not been initialized for this project.")
-        dsutils_error("Please run the DSUtils initialization script before continuing.")
+        dsutils_error("This probably means that DSUtils has not been setup for this project.")
+        dsutils_error("Please run the DSUtils setup script before continuing.")
         dsutils_error("Exiting...")
         sys.exit(1)
 

@@ -5,7 +5,7 @@ import os
 
 class TestFilesAndFoldersEntries(unittest.TestCase):
     def setUp(self):
-        json_file_path = os.path.abspath(__file__ + '/../../.dsutils/files_and_folders.json')
+        json_file_path = os.path.abspath(__file__ + '/../../dsutils/files_and_folders.json')
         with open(json_file_path, 'r') as file:
             self.files_and_folders = json.load(file)
     

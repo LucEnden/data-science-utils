@@ -1,4 +1,4 @@
-from internals import *
+from dsutils.internals import *
 import os, sys
 import argparse
 from urllib.parse import urlparse
@@ -220,8 +220,8 @@ def __main__():
         #region Verify sources.csv file exists
         if not os.path.isfile(SOURCES_FILE):
             dsutils_error(f"Sources file does not exist: {SOURCES_FILE}")
-            dsutils_error(f"This probably means that DSUtils has not been initialized for this project.")
-            dsutils_error(f"Please run the dsutils initialization script before continuing.")
+            dsutils_error(f"This probably means that DSUtils has not been setup for this project.")
+            dsutils_error(f"Please run the DSUtils setup script before continuing.")
             dsutils_error(f"Exiting...")
             sys.exit(1)
         #endregion

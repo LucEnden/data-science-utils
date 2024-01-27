@@ -1,4 +1,4 @@
-from internals import *
+from dsutils.internals import *
 import os, sys
 import argparse
 import re
@@ -143,8 +143,8 @@ def start_experiment(name: str | None = None, description: str | None = None):
         experiments_dir = dsutils_get_experiments_dir()
         if not os.path.exists(experiments_dir):
             dsutils_error("The experiments directory does not exist.")
-            dsutils_error("This probably means that DSUtils has not been initialized for this project.")
-            dsutils_error("Please run the DSUtils initialization script before continuing.")
+            dsutils_error("This probably means that DSUtils has not been setup for this project.")
+            dsutils_error("Please run the DSUtils setup script before continuing.")
             raise FileNotFoundError(f"The experiments directory does not exist: {experiments_dir}")
 
         # Parse arguments

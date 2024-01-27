@@ -1,5 +1,5 @@
-from internals import *
-from create_files_and_folders import create_files_and_folders, __get_files_and_folders__, __remove_files_and_folders__
+from .internals import *
+from .create_files_and_folders import create_files_and_folders, __get_files_and_folders__, __remove_files_and_folders__
 import os, sys
 import argparse
 
@@ -8,19 +8,21 @@ parser = argparse.ArgumentParser(description='Initialize DSUtils for the given p
 parser.add_argument('-p', '--projectroot', default=None, help='The path (relative or absolute) to the root directory of the project you want to use DSUtils with.')
 args = parser.parse_args()
 PROJECT_ROOT = args.projectroot
+CREATED_FILES_AND_FOLDERS_CALLED = False
 
 
 def __cleanup__():
     try:
         if os.path.isfile(ENV_FILE):
             os.remove(ENV_FILE)
-        __remove_files_and_folders__()
+        if CREATED_FILES_AND_FOLDERS_CALLED:
+            __remove_files_and_folders__()
     except Exception as e:
         dsutils_error("Exception occured while cleaning up:")
         dsutils_error(e)
 
 
-def __main__():
+def setup():
     """
     Creates the .dsutils.env file in the project root directory
     
@@ -59,7 +61,7 @@ def __main__():
         env_file_path = PROJECT_ROOT + ENV_FILE.replace("/", os.sep)
         if os.path.isfile(env_file_path):
             dsutils_warn("Environment file for DSUtils already exists.")
-            dsutils_warn("This probably means that DSUtils has already been initialized for this project.")
+            dsutils_warn("This probably means that DSUtils has already been setup for this project.")
             dsutils_warn("Continuing will overwrite the existing environment file.")
             awnser = dsutils_input_yes_no("Continue? (y/n): ")
 
@@ -72,6 +74,7 @@ def __main__():
                 
         #region Create files and folders
         created_paths = create_files_and_folders(PROJECT_ROOT)
+        CREATED_FILES_AND_FOLDERS_CALLED = True
         #endregion
 
         #region Create environment file
@@ -101,4 +104,4 @@ def __main__():
 
 
 if __name__ == "__main__":
-    __main__()
+    setup()
