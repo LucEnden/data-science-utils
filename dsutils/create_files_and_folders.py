@@ -1,8 +1,4 @@
-print(__name__)
-if __name__ == "__main__":
-    from internals import *
-else:
-    from .internals import *
+from .internals import *
 import os
 import json
 
@@ -119,12 +115,5 @@ def create_files_and_folders(project_root: str | None = None):
         sys.exit(1)
 
 
-def __main__():
-    """
-    Creates the files and folders needed to house the data, artifacts and experiments of the project.
-    """
-    create_files_and_folders()
-
-
 if __name__ == "__main__":
-    __main__()
+    create_files_and_folders()

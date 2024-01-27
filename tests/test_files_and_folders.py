@@ -3,7 +3,7 @@ import json
 import os
 
 
-class TestFilesAndFoldersEntries(unittest.TestCase):
+class TestFilesAndFolders(unittest.TestCase):
     def setUp(self):
         json_file_path = os.path.abspath(__file__ + '/../../dsutils/files_and_folders.json')
         with open(json_file_path, 'r') as file:

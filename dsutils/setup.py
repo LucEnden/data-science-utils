@@ -4,14 +4,13 @@ import os, sys
 import argparse
 
 
-parser = argparse.ArgumentParser(description='Initialize DSUtils for the given project.')
-parser.add_argument('-p', '--projectroot', default=None, help='The path (relative or absolute) to the root directory of the project you want to use DSUtils with.')
-args = parser.parse_args()
-PROJECT_ROOT = args.projectroot
+PROJECT_ROOT = None
 CREATED_FILES_AND_FOLDERS_CALLED = False
 
 
 def __cleanup__():
+    global CREATED_FILES_AND_FOLDERS_CALLED
+
     try:
         if os.path.isfile(ENV_FILE):
             os.remove(ENV_FILE)
@@ -30,7 +29,12 @@ def setup():
 
     It then creates the files and folders needed to house the data, artifacts and experiments of the project.
     """
-    global PROJECT_ROOT
+    global PROJECT_ROOT, CREATED_FILES_AND_FOLDERS_CALLED
+
+    parser = argparse.ArgumentParser(description='Initialize DSUtils for the given project.')
+    parser.add_argument('-p', '--projectroot', default=None, help='The path (relative or absolute) to the root directory of the project you want to use DSUtils with.')
+    args = parser.parse_args()
+    PROJECT_ROOT = args.projectroot
 
     try:
         #region Parse project root directory
