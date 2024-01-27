@@ -205,7 +205,7 @@ def dsutils_read_env(project_root: str = os.getcwd()):
 
     with open(env) as f:
         env_vars = f.read().splitlines()
-        env_dict = {}
+        env_dict: dict[str, str] = dict()
         for v in env_vars:
             env_dict[v.split("=")[0]] = v.split("=")[1]
 
