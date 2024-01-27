@@ -33,54 +33,7 @@ jobs:
       - name: Run step if any of the listed files above change
         if: steps.changed-files.outputs.added_files_count > 0 || steps.changed-files.outputs.deleted_files_count > 0 || steps.changed-files.outputs.renamed_files_count > 0 || steps.changed-files.outputs.type_changed_files_count > 0
         run: |
-            echo "One or more files listed above has changed. Setting VERSION_BUMP to minor"
             echo "VERSION_BUMP=minor" >> "$GITHUB_ENV"
-    #   - name: Determine bump level
-    #     id: determine-bump-level
-    #     run: |
-    #         echo "Getting file changes..."
-    #         git diff-tree --no-commit-id --name-status -r ${{ github.sha }} > git_diff_tree.txt
-            
-    #         pattern="^[A-Z]\s+"
-    #         array_variable=()
-    #         while IFS= read -r line; do
-    #             array_variable+=("$line")
-    #         done < <(grep -E $pattern git_diff_tree.txt)
-            
-    #         version_bump="patch"
-    #         for element in "${array_variable[@]}"; do
-    #             echo "$element"
-
-    #             # Element can start with one of the following letters:
-    #                 # Added (A),
-    #                 # Copied (C),
-    #                 # Deleted (D),
-    #                 # Modified (M),
-    #                 # Renamed (R),
-    #                 # have their type changed (T),
-    #                 # Unmerged (U),
-    #                 # Unknown (X),
-    #                 # or have had their pairing Broken (B).
-
-    #             # We detirmine the level of the bump based on the following:
-    #                 # If the push contains changes to the file structure, we bump the minor version
-    #                     # That is, if starts with any of the following letters: A, D, R, T
-    #                 # Else we bump the patch version
-            
-    #             if echo "$element" | grep -q "^[ADRT]"; then
-    #                 version_bump="minor"
-    #                 break
-    #             fi
-    #         done
-            
-    #         echo "Bumping $version_bump version..."
-    #         echo "version-bump=$version_bump" >> "$GITHUB_OUTPUT"
-    #   - name: Echo the bump level
-    #     id: echo-bump-level
-    #     run: |
-    #       # Echo the bump level to the console
-    #       echo "New version: ${{ steps.determine-bump-level.outputs.version-bump }}"
-    
       - name: Echo the bump level
         id: echo-bump-level
         run: |
@@ -88,11 +41,6 @@ jobs:
         # Get the latest version tag
       - uses: actions-ecosystem/action-get-latest-tag@v1
         id: get-latest-tag
-    #   - uses: actions-ecosystem/action-bump-semver@v1
-    #     id: bump-semver
-    #     with:
-    #       current_version: ${{ steps.get-latest-tag.outputs.tag }}
-    #       level: "${{ steps.determine-bump-level.outputs.version-bump }}"
       - uses: actions-ecosystem/action-bump-semver@v1
         id: bump-semver
         with:
