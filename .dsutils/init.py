@@ -1,5 +1,5 @@
 from internals import *
-from create_files_and_folders import create_files_and_folders, __remove_files_and_folders__
+from create_files_and_folders import create_files_and_folders, __get_files_and_folders__, __remove_files_and_folders__
 import os, sys
 import argparse
 
@@ -56,7 +56,7 @@ def __main__():
         #endregion
 
         #region Verify environment file does not exist, or ask user if they want to overwrite it
-        env_file_path = os.path.join(PROJECT_ROOT, ENV_FILE)
+        env_file_path = PROJECT_ROOT + ENV_FILE.replace("/", os.sep)
         if os.path.isfile(env_file_path):
             dsutils_warn("Environment file for DSUtils already exists.")
             dsutils_warn("This probably means that DSUtils has already been initialized for this project.")
@@ -75,11 +75,19 @@ def __main__():
         #endregion
 
         #region Create environment file
-        sources_file_path = [ p for p in created_paths if p.endswith("sources.csv") ][0]
+        env_vars = [
+            ("PROJECT_ROOT", PROJECT_ROOT),
+            ("PROJECT_NAME", os.path.basename(PROJECT_ROOT))
+        ]
+        for key, value in zip(__get_files_and_folders__(PROJECT_ROOT), created_paths):
+            if key != "env_file":
+                env_vars.append((str(key).upper(), value.replace(PROJECT_ROOT, "")))
+
         with open(env_file_path, "w") as f:
-            f.write(f"PROJECT_ROOT={PROJECT_ROOT}\n")
-            f.write(f"PROJECT_NAME={os.path.basename(PROJECT_ROOT)}\n")
-            f.write(f"SOURCES_FILE={sources_file_path}\n")
+            for i, v in enumerate(env_vars):
+                f.write(f"{v[0]}={v[1]}")
+                if i < len(env_vars) - 1:
+                    f.write("\n")
 
         dsutils_success(f"Created DSUtils environment file at: {env_file_path}")
         #endregion

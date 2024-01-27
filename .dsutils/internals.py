@@ -4,11 +4,6 @@ from datetime import datetime
 
 
 ENV_FILE = "/.dsutils.env"
-SOURCES_FILE = "/sources.csv"
-ARTIFACTS_DIR = "/artifacts"
-DATA_DIR = "/data"
-PROCESSED_DIR = DATA_DIR + "/processed"
-RAW_DIR = DATA_DIR + "/raw"
 
 
 #region Console Methods
@@ -31,9 +26,11 @@ def __parse_logoptions__(log_options: list[LogOptions] = []):
     Parses a list of LogOptions into a string.
 
     Args:
+    ------
         log_options (list[LogOptions], optional): A list of LogOptions. Defaults to [].
 
     Returns:
+    ------
         str: A string containing the LogOptions.
     """
     # If no log_options are provided, default to white
@@ -53,6 +50,7 @@ def __dfutils_log__(message: str, log_options: list[LogOptions] = []):
     Logs a message with the specified formatting log_options.
 
     Args:
+    ------
         message (str): The message to log.
         log_options (list[LogOptions], optional): A list of formatting log_options. Defaults to [].
     """
@@ -64,6 +62,7 @@ def dsutils_info(message: str):
     Logs a message with plain white text.
 
     Args:
+    ------
         message (str): The message to log.
     """
     __dfutils_log__(message, [ LogOptions.clr_WHITE ])
@@ -74,6 +73,7 @@ def dsutils_success(message: str):
     Logs a success message with green, bold, and underlined text.
 
     Args:
+    ------
         message (str): The message to log.
     """
     __dfutils_log__(message, [ LogOptions.clr_GREEN, LogOptions.trs_BOLD, LogOptions.trs_UNDERLINE ])
@@ -84,6 +84,7 @@ def dsutils_warn(message: str):
     Logs a warning message with yellow, bold, and underlined text.
 
     Args:
+    ------
         message (str): The message to log.
     """
     __dfutils_log__(message, [ LogOptions.clr_YELLOW, LogOptions.trs_BOLD, LogOptions.trs_UNDERLINE ])
@@ -94,6 +95,7 @@ def dsutils_error(message: str):
     Logs an error message with red, bold, and underlined text.
 
     Args:
+    ------
         message (str): The message to log.
     """
     __dfutils_log__(message, [ LogOptions.clr_RED, LogOptions.trs_BOLD, LogOptions.trs_UNDERLINE ])
@@ -106,10 +108,12 @@ def dsutils_input(message: str, log_options: list[LogOptions] = []):
     Prompts the user for input with a formatted message.
 
     Args:
+    ------
         message (str): The message to display.
         log_options (list[LogOptions], optional): A list of formatting log_options. Defaults to [].
 
     Returns:
+    ------
         str: The user's input.
     """
     return input(f"{__parse_logoptions__(log_options)}[DSUTILS | {datetime.now().strftime('%H:%M:%S')}]:{LogOptions.END} {message}")
@@ -120,11 +124,13 @@ def dsutils_input_options(message: str, options: list[str], log_options: list[Lo
     Prompts the user for input with a formatted message and a list of options.
 
     Args:
+    ------
         message (str): The message to display.
         options (list[str]): A list of options to display.
         log_options (list[LogOptions], optional): A list of formatting log_options. Defaults to [].
 
     Returns:
+    ------
         str: The selected option.
     """
     dsutils_info(f"{message}")
@@ -180,20 +186,24 @@ def dsutils_read_env(project_root: str = os.getcwd()):
     If the environment file does not exist, an error is printed to the console and the program exits.
 
     Args:
+    ------
         project_root (str, optional): The root directory of the project. Defaults to `os.getcwd()`.
 
     Returns:
+    ------
         dict: A dictionary of the environment variables.
     """
-    ENV_FILE = os.path.join(project_root, ENV_FILE)
-    if not os.path.isfile(ENV_FILE):
+    global ENV_FILE
+
+    env = project_root + ENV_FILE.replace("/", os.sep)
+    if not os.path.isfile(env):
         dsutils_error("Environment file does not exist.")
         dsutils_error("This probably means that DSUtils has not been initialized for this project.")
         dsutils_error("Please run the DSUtils initialization script before continuing.")
         dsutils_error("Exiting...")
         sys.exit(1)
 
-    with open(ENV_FILE) as f:
+    with open(env) as f:
         env_vars = f.read().splitlines()
         env_dict = {}
         for v in env_vars:
@@ -206,24 +216,126 @@ def dsutils_get_project_root():
     """
     Returns the root directory of the project.
 
+    Equivalent to: `dsutils_read_env()["PROJECT_ROOT"]`.
+
     Returns:
+    ------
         str: The root directory of the project.
     """
     envs = dsutils_read_env()
     project_root = envs["PROJECT_ROOT"]
-    return project_root
+    return str(project_root)
 
 
 def dsutils_get_project_name():
     """
     Returns the name of the project.
 
+    Equivalent to: `dsutils_read_env()["PROJECT_NAME"]`.
+
     Returns:
+    ------
         str: The name of the project.
     """
     envs = dsutils_read_env()
     project_name = envs["PROJECT_NAME"]
-    return project_name
+    return str(project_name)
+
+
+def dsutils_get_artifacts_dir():
+    """
+    Returns the path to the artifacts directory.
+
+    Equivalent to: `dsutils_get_project_root() + dsutils_read_env()["ARTIFACTS_DIR"]`.
+
+    Returns:
+    ------
+        str: The path to the artifacts directory.
+    """
+    envs = dsutils_read_env()
+    project_root = envs["PROJECT_ROOT"]
+    artifacts_dir = envs["ARTIFACTS_DIR"]
+    return str(project_root) + str(artifacts_dir)
+
+
+def dsutils_get_data_dir():
+    """
+    Returns the path to the data directory.
+
+    Equivalent to: `dsutils_get_project_root() + dsutils_read_env()["DATA_DIR"]`.
+
+    Returns:
+    ------
+        str: The path to the data directory.
+    """
+    envs = dsutils_read_env()
+    project_root = envs["PROJECT_ROOT"]
+    data_dir = envs["DATA_DIR"]
+    return str(project_root) + str(data_dir)
+
+
+def dsutils_get_data_processed_dir():
+    """
+    Returns the path to the processed data directory.
+
+    Equivalent to: `dsutils_get_project_root() + dsutils_read_env()["DATA_PROCESSED_DIR"]`.
+
+    Returns:
+    ------
+        str: The path to the processed data directory.
+    """
+    envs = dsutils_read_env()
+    project_root = envs["PROJECT_ROOT"]
+    processed_dir = envs["DATA_PROCESSED_DIR"]
+    return str(project_root) + str(processed_dir)
+
+
+def dsutils_get_data_raw_dir():
+    """
+    Returns the path to the raw data directory.
+
+    Equivalent to: `dsutils_get_project_root() + dsutils_read_env()["DATA_RAW_DIR"]`.
+
+    Returns:
+    ------
+        str: The path to the raw data directory.
+    """
+    envs = dsutils_read_env()
+    project_root = envs["PROJECT_ROOT"]
+    raw_dir = envs["DATA_RAW_DIR"]
+    return str(project_root) + str(raw_dir)
+
+
+def dsutils_get_experiments_dir():
+    """
+    Returns the path to the experiments directory.
+
+    Equivalent to: `dsutils_get_project_root() + dsutils_read_env()["EXPERIMENTS_DIR"]`.
+
+    Returns:
+    ------
+        str: The path to the experiments directory.
+    """
+    envs = dsutils_read_env()
+    project_root = envs["PROJECT_ROOT"]
+    experiments_dir = envs["EXPERIMENTS_DIR"]
+    return str(project_root) + str(experiments_dir)
+
+
+def dsutils_get_sources_file():
+    """
+    Returns the path to the sources file.
+
+    Equivalent to: `dsutils_get_project_root() + dsutils_read_env()["SOURCES_FILE"]`.
+
+    Returns:
+    ------
+        str: The path to the sources file.
+    """
+    envs = dsutils_read_env()
+    project_root = envs["PROJECT_ROOT"]
+    sources_file = envs["SOURCES_FILE"]
+    return str(project_root) + str(sources_file)
 
 
 def dsutils_get_sources_file_content():
@@ -231,17 +343,20 @@ def dsutils_get_sources_file_content():
     Reads the sources file and returns a list of the lines.
 
     If the sources file does not exist, an error is printed to the console and the program exits.
-    """
-    envs = dsutils_read_env()
-    SOURCES_FILE = envs["SOURCES_FILE"]
 
-    if not os.path.isfile(SOURCES_FILE):
-        dsutils_error(f"Sources file does not exist: {SOURCES_FILE}")
+    Returns:
+    ------
+        list: A list of the lines in the sources file.
+    """
+    sources_file = dsutils_get_sources_file()
+
+    if not os.path.isfile(sources_file):
+        dsutils_error(f"Sources file does not exist: {sources_file}")
         dsutils_error("This probably means that DSUtils has not been initialized for this project.")
         dsutils_error("Please run the DSUtils initialization script before continuing.")
         dsutils_error("Exiting...")
         sys.exit(1)
 
-    with open(SOURCES_FILE, 'r') as file:
+    with open(sources_file, 'r') as file:
         sources = file.readlines()
         return sources

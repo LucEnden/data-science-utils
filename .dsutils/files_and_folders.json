@@ -1,40 +1,30 @@
 {
-    "environment": {
-        "path": "/.dsutils.env",
-        "isFile": true,
-        "fileContents": ""
-    },
-    "artifacts": {
+    "artifacts_dir": {
         "path": "/artifacts",
         "isFile": false,
         "fileContents": ""
     },
-    "artifacts.py": {
-        "path": "/artifacts/artifacts.py",
-        "isFile": true,
-        "fileContents": ""
-    },
-    "data": {
+    "data_dir": {
         "path": "/data",
         "isFile": false,
         "fileContents": ""
     },
-    "processed": {
+    "data_processed_dir": {
         "path": "/data/processed",
         "isFile": false,
         "fileContents": ""
     },
-    "raw": {
+    "data_raw_dir": {
         "path": "/data/raw",
         "isFile": false,
         "fileContents": ""
     },
-    "experiments": {
+    "experiments_dir": {
         "path": "/experiments",
         "isFile": false,
         "fileContents": ""
     },
-    "sources.csv": {
+    "sources_file": {
         "path": "/sources.csv",
         "isFile": true,
         "fileContents": [
