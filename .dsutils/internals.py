@@ -5,7 +5,7 @@ from datetime import datetime
 
 ENV_FILE = "/.dsutils.env"
 SOURCES_FILE = "/sources.csv"
-ARTIFACTS_DIR = "/artefacts"
+ARTIFACTS_DIR = "/artifacts"
 DATA_DIR = "/data"
 PROCESSED_DIR = DATA_DIR + "/processed"
 RAW_DIR = DATA_DIR + "/raw"

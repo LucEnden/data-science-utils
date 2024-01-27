@@ -117,7 +117,7 @@ def create_files_and_folders(project_root: str | None = None):
 
 def __main__():
     """
-    Creates the files and folders needed to house the data, artefacts and experiments of the project.
+    Creates the files and folders needed to house the data, artifacts and experiments of the project.
     """
     create_files_and_folders()
 

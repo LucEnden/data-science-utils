@@ -26,7 +26,7 @@ def __main__():
     
     It then asks the user what the root directory is of the project they want use DSUtils with. The awnser is then written to the .dsutils.env file.
 
-    It then creates the files and folders needed to house the data, artefacts and experiments of the project.
+    It then creates the files and folders needed to house the data, artifacts and experiments of the project.
     """
     global PROJECT_ROOT
 

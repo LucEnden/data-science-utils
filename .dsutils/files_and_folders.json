@@ -4,13 +4,13 @@
         "isFile": true,
         "fileContents": ""
     },
-    "artefacts": {
-        "path": "/artefacts",
+    "artifacts": {
+        "path": "/artifacts",
         "isFile": false,
         "fileContents": ""
     },
-    "artefacts.py": {
-        "path": "/artefacts/artefacts.py",
+    "artifacts.py": {
+        "path": "/artifacts/artifacts.py",
         "isFile": true,
         "fileContents": ""
     },
