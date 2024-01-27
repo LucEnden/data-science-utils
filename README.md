@@ -1,4 +1,4 @@
-# data-science-utils
+# DSUtils
 A comprehensive collection of utilities designed to supercharge my (and hopefully others) data science workflow.
 
 ## Design

@@ -168,5 +168,5 @@ cython_debug/
 artefacts/
 data/
 experiments/
-.dsutils/.dsutils.env
+.dsutils.env
 sources.csv

@@ -1,5 +1,5 @@
 from internals import *
-from create_files_and_folders import __create_files_and_folders__, __cleanup__ as __cleanup_create_files_and_folders__
+from create_files_and_folders import create_files_and_folders, __remove_files_and_folders__
 import os, sys
 import argparse
 
@@ -11,10 +11,13 @@ PROJECT_ROOT = args.projectroot
 
 
 def __cleanup__():
-    if os.path.isfile(ENV_FILE):
-        os.remove(ENV_FILE)
-    __cleanup_create_files_and_folders__()
-    sys.exit(1)
+    try:
+        if os.path.isfile(ENV_FILE):
+            os.remove(ENV_FILE)
+        __remove_files_and_folders__()
+    except Exception as e:
+        dsutils_error("Exception occured while cleaning up:")
+        dsutils_error(e)
 
 
 def __main__():
@@ -28,19 +31,6 @@ def __main__():
     global PROJECT_ROOT
 
     try:
-        #region Verify environment file does not exist, or ask user if they want to overwrite it
-        if os.path.isfile(ENV_FILE):
-            dsutils_warn("Environment file already exists. This probably means that DSUtils has already been initialized for this project.")
-            dsutils_warn("Continuing will overwrite the existing environment file.")
-            awnser = dsutils_yes_no("Continue? (y/n): ")
-
-            if not awnser:
-                dsutils_info("Exiting...")
-                sys.exit(0)
-            else:
-                os.remove(ENV_FILE)
-        #endregion
-
         #region Parse project root directory
         if PROJECT_ROOT is None:
             # Ask the user what the root directory is of the project they want to use DSUtils with
@@ -54,32 +44,48 @@ def __main__():
         
         while not root_is_correct:
             dsutils_info(f"Is this the path to the root directory of your project?")
-            dsutils_info(f"\t{PROJECT_ROOT}")
-            is_root_correct = dsutils_input(f"(y/n): ")
-            if is_root_correct == "y":
+            dsutils_info(f"{PROJECT_ROOT}")
+            is_root_correct = dsutils_input_yes_no(f"(y/n): ")
+            if is_root_correct:
                 root_is_correct = True
-            elif is_root_correct == "n":
+            else:
                 PROJECT_ROOT = dsutils_input("Please enter the root directory of your project: ")
                 PROJECT_ROOT = os.path.abspath(PROJECT_ROOT.strip())
-            else:
-                dsutils_warn("Please enter either 'y' or 'n'")
 
-        with open(ENV_FILE, "a") as f:
-            f.write(f"PROJECT_ROOT={PROJECT_ROOT}")
-
-        dsutils_success(f"Set PROJECT_ROOT to: {PROJECT_ROOT}")
+        dsutils_success(f"PROJECT_ROOT was set to: {PROJECT_ROOT}")
         #endregion
-            
+
+        #region Verify environment file does not exist, or ask user if they want to overwrite it
+        env_file_path = os.path.join(PROJECT_ROOT, ENV_FILE)
+        if os.path.isfile(env_file_path):
+            dsutils_warn("Environment file for DSUtils already exists.")
+            dsutils_warn("This probably means that DSUtils has already been initialized for this project.")
+            dsutils_warn("Continuing will overwrite the existing environment file.")
+            awnser = dsutils_input_yes_no("Continue? (y/n): ")
+
+            if not awnser:
+                dsutils_info("Exiting...")
+                sys.exit(0)
+            else:
+                os.remove(env_file_path)
+        #endregion
+                
         #region Create files and folders
-        __create_files_and_folders__()
+        created_paths = create_files_and_folders(PROJECT_ROOT)
         #endregion
 
         #region Create environment file
-        with open(ENV_FILE, "w") as f:
-            f.write("")
+        sources_file_path = [ p for p in created_paths if p.endswith("sources.csv") ][0]
+        with open(env_file_path, "w") as f:
+            f.write(f"PROJECT_ROOT={PROJECT_ROOT}\n")
+            f.write(f"PROJECT_NAME={os.path.basename(PROJECT_ROOT)}\n")
+            f.write(f"SOURCES_FILE={sources_file_path}\n")
 
-        dsutils_success(f"Created DSUtils environment file: {ENV_FILE}")
+        dsutils_success(f"Created DSUtils environment file at: {env_file_path}")
         #endregion
+
+        # TODO: Update gitignore
+            
     except KeyboardInterrupt:
         dsutils_error("KeyboardInterrupt")
         __cleanup__()

@@ -1,4 +1,9 @@
 {
+    "environment": {
+        "path": "/.dsutils.env",
+        "isFile": true,
+        "fileContents": ""
+    },
     "artefacts": {
         "path": "/artefacts",
         "isFile": false,
@@ -33,7 +38,7 @@
         "path": "/sources.csv",
         "isFile": true,
         "fileContents": [
-            "id,name,type,description,url,citation"
+            "id;name;description;url;citation"
         ]
     }
 }
