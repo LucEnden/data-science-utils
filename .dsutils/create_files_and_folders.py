@@ -84,7 +84,7 @@ def create_files_and_folders(project_root: str | None = None):
         project_root = dsutils_get_project_root()
 
     files_and_folders = __get_files_and_folders__(project_root)
-    paths = []
+    paths: list[str] = []
 
     try:
         dsutils_info("Creating files and folders...")
@@ -102,7 +102,7 @@ def create_files_and_folders(project_root: str | None = None):
                     os.mkdir(files_and_folders[f]['path'])
                 dsutils_success(f"\t{files_and_folders[f]['path']}")
 
-            paths.append(files_and_folders[f]['path'])
+            paths.append(str(files_and_folders[f]['path']))
 
         return paths
     except KeyboardInterrupt:
