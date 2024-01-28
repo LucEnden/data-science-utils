@@ -138,7 +138,6 @@ def start_experiment(name: str | None = None, description: str | None = None):
     global NAME, DESCRIPTION
 
     try:
-
         # Verify experiments directory exists
         experiments_dir = dsutils_get_experiments_dir()
         if not os.path.exists(experiments_dir):
@@ -206,16 +205,9 @@ def start_experiment(name: str | None = None, description: str | None = None):
         dsutils_success(f"Successfully created experiment: {dir_name}")
         return dir_path
     except KeyboardInterrupt:
-        dsutils_error("Keyboard interrupt detected. Exiting...")
+        dsutils_error("KeyboardInterrupt")
         sys.exit(1)
 
 
-def __main__():
-    """
-    Creates a new experiment directory and notebook.
-    """
-    start_experiment()
-
-
 if __name__ == "__main__":
-    __main__()
+    start_experiment()

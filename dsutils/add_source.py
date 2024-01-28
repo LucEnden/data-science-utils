@@ -159,79 +159,60 @@ def add_source(name: str | None = None, description: str | None = None, url: str
     url_errors = __validate_URL__(URL)
     citation_errors = __validate_CITATION__(CITATION)
 
+    try:
     # Interactive mode when called from command line
     # Will prompt user to rectify invalid arguments
-    if __name__ == "__main__":
-        while len(name_errors) > 0:
-            for error in name_errors:
-                dsutils_warn(error)
-            NAME = dsutils_input("Source name: ")
-            NAME = NAME.strip()
-            name_errors = __validate_NAME__(NAME)
+        if __name__ == "__main__":
+            while len(name_errors) > 0:
+                for error in name_errors:
+                    dsutils_warn(error)
+                NAME = dsutils_input("Source name: ")
+                NAME = NAME.strip()
+                name_errors = __validate_NAME__(NAME)
 
-        while len(description_errors) > 0:
-            for error in description_errors:
-                dsutils_warn(error)
-            DESCRIPTION = dsutils_input("Source description: ")
-            DESCRIPTION = DESCRIPTION.strip()
-            description_errors = __validate_DESCRIPTION__(DESCRIPTION)
+            while len(description_errors) > 0:
+                for error in description_errors:
+                    dsutils_warn(error)
+                DESCRIPTION = dsutils_input("Source description: ")
+                DESCRIPTION = DESCRIPTION.strip()
+                description_errors = __validate_DESCRIPTION__(DESCRIPTION)
 
-        while len(url_errors) > 0:
-            for error in url_errors:
-                dsutils_warn(error)
-            URL = dsutils_input("Source URL: ")
-            URL = URL.strip()
-            url_errors = __validate_URL__(URL)
+            while len(url_errors) > 0:
+                for error in url_errors:
+                    dsutils_warn(error)
+                URL = dsutils_input("Source URL: ")
+                URL = URL.strip()
+                url_errors = __validate_URL__(URL)
 
-        while len(citation_errors) > 0:
-            for error in citation_errors:
-                dsutils_warn(error)
-            CITATION = dsutils_input("Source citation: ")
-            CITATION = CITATION.strip()
-            citation_errors = __validate_CITATION__(CITATION)
+            while len(citation_errors) > 0:
+                for error in citation_errors:
+                    dsutils_warn(error)
+                CITATION = dsutils_input("Source citation: ")
+                CITATION = CITATION.strip()
+                citation_errors = __validate_CITATION__(CITATION)
 
-    # Non-interactive mode when called from another script
-    # Will raise ValueError if any arguments are invalid
-    else:
-        joined_errors = name_errors + description_errors + url_errors + citation_errors
-        if len(joined_errors) > 0:
-            raise ValueError("Invalid argument values:\n" + '\n'.join(joined_errors))
-        
-    existing_sources = dsutils_get_sources_file_content()
-    new_id = 0
-    if len(existing_sources) > 1:
-        new_id = int(existing_sources[-1].split(';')[0]) + 1
+        # Non-interactive mode when called from another script
+        # Will raise ValueError if any arguments are invalid
+        else:
+            joined_errors = name_errors + description_errors + url_errors + citation_errors
+            if len(joined_errors) > 0:
+                raise ValueError("Invalid argument values:\n" + '\n'.join(joined_errors))
+            
+        existing_sources = dsutils_get_sources_file_content()
+        new_id = 0
+        if len(existing_sources) > 1:
+            new_id = int(existing_sources[-1].split(';')[0]) + 1
 
-    newline = f"{new_id};'{NAME}';'{DESCRIPTION}';'{URL}';'{CITATION}'"
+        newline = f"{new_id};'{NAME}';'{DESCRIPTION}';'{URL}';'{CITATION}'"
 
-    with open(SOURCES_FILE, 'a') as file:
-        file.write(f"\n{newline}")
+        with open(SOURCES_FILE, 'a') as file:
+            file.write(f"\n{newline}")
 
-    return newline
-
-
-def __main__():
-    """
-    Adds a new source entry to the sources.csv file.
-    """
-    global NAME, DESCRIPTION, URL, CITATION
-
-    try:
-        #region Verify sources.csv file exists
-        if not os.path.isfile(SOURCES_FILE):
-            dsutils_error(f"Sources file does not exist: {SOURCES_FILE}")
-            dsutils_error(f"This probably means that DSUtils has not been setup for this project.")
-            dsutils_error(f"Please run the DSUtils setup script before continuing.")
-            dsutils_error(f"Exiting...")
-            sys.exit(1)
-        #endregion
-        
-        newline = add_source(NAME, DESCRIPTION, URL, CITATION)
-        dsutils_success(f"Added source '{NAME}' to sources file.")
+        return newline
     except KeyboardInterrupt:
         dsutils_error("KeyboardInterrupt")
         sys.exit(1)
 
 
 if __name__ == "__main__":
-    __main__()
+    add_source()
