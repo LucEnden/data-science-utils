@@ -7,7 +7,7 @@ ENV_FILE = "/.dsutils.env"
 
 
 #region Console Methods
-class LogOptions:
+class __LogOptions__:
     clr_WHITE = '\033[97m'
     clr_PURPLE = '\033[95m'
     clr_BLUE = '\033[94m'
@@ -21,40 +21,40 @@ class LogOptions:
     END = '\033[0m'
 
 
-def __parse_logoptions__(log_options: list[LogOptions] = []):
+def __parse_logoptions__(log_options: list[__LogOptions__] = []):
     """
-    Parses a list of LogOptions into a string.
+    Parses a list of __LogOptions__ into a string.
 
     Args:
     ------
-        log_options (list[LogOptions], optional): A list of LogOptions. Defaults to [].
+        log_options (list[__LogOptions__], optional): A list of __LogOptions__. Defaults to [].
 
     Returns:
     ------
-        str: A string containing the LogOptions.
+        str: A string containing the __LogOptions__.
     """
     # If no log_options are provided, default to white
     if len(log_options) == 0:
-        log_options = [ LogOptions.clr_WHITE ]
+        log_options = [ __LogOptions__.clr_WHITE ]
 
     # Remove END option if it exists
-    if LogOptions.END in log_options:
-        log_options.remove(LogOptions.END)
+    if __LogOptions__.END in log_options:
+        log_options.remove(__LogOptions__.END)
 
     join_options = "".join(log_options)
     return join_options
 
 
-def __dfutils_log__(message: str, log_options: list[LogOptions] = []):
+def __dfutils_log__(message: str, log_options: list[__LogOptions__] = []):
     """
     Logs a message with the specified formatting log_options.
 
     Args:
     ------
         message (str): The message to log.
-        log_options (list[LogOptions], optional): A list of formatting log_options. Defaults to [].
+        log_options (list[__LogOptions__], optional): A list of formatting log_options. Defaults to [].
     """
-    print(f"{__parse_logoptions__(log_options)}[DSUTILS | {datetime.now().strftime('%H:%M:%S')}]:{LogOptions.END} {message}")
+    print(f"{__parse_logoptions__(log_options)}[DSUTILS | {datetime.now().strftime('%H:%M:%S')}]:{__LogOptions__.END} {message}")
 
 
 def dsutils_info(message: str):
@@ -65,7 +65,7 @@ def dsutils_info(message: str):
     ------
         message (str): The message to log.
     """
-    __dfutils_log__(message, [ LogOptions.clr_WHITE ])
+    __dfutils_log__(message, [ __LogOptions__.clr_WHITE ])
 
 
 def dsutils_success(message: str):
@@ -76,7 +76,7 @@ def dsutils_success(message: str):
     ------
         message (str): The message to log.
     """
-    __dfutils_log__(message, [ LogOptions.clr_GREEN, LogOptions.trs_BOLD, LogOptions.trs_UNDERLINE ])
+    __dfutils_log__(message, [ __LogOptions__.clr_GREEN, __LogOptions__.trs_BOLD, __LogOptions__.trs_UNDERLINE ])
 
 
 def dsutils_warn(message: str):
@@ -87,7 +87,7 @@ def dsutils_warn(message: str):
     ------
         message (str): The message to log.
     """
-    __dfutils_log__(message, [ LogOptions.clr_YELLOW, LogOptions.trs_BOLD, LogOptions.trs_UNDERLINE ])
+    __dfutils_log__(message, [ __LogOptions__.clr_YELLOW, __LogOptions__.trs_BOLD, __LogOptions__.trs_UNDERLINE ])
     
 
 def dsutils_error(message: str):
@@ -98,28 +98,28 @@ def dsutils_error(message: str):
     ------
         message (str): The message to log.
     """
-    __dfutils_log__(message, [ LogOptions.clr_RED, LogOptions.trs_BOLD, LogOptions.trs_UNDERLINE ])
+    __dfutils_log__(message, [ __LogOptions__.clr_RED, __LogOptions__.trs_BOLD, __LogOptions__.trs_UNDERLINE ])
 #endregion
     
 
 #region Input Methods
-def dsutils_input(message: str, log_options: list[LogOptions] = []):
+def dsutils_input(message: str, log_options: list[__LogOptions__] = []):
     """
     Prompts the user for input with a formatted message.
 
     Args:
     ------
         message (str): The message to display.
-        log_options (list[LogOptions], optional): A list of formatting log_options. Defaults to [].
+        log_options (list[__LogOptions__], optional): A list of formatting log_options. Defaults to [].
 
     Returns:
     ------
         str: The user's input.
     """
-    return input(f"{__parse_logoptions__(log_options)}[DSUTILS | {datetime.now().strftime('%H:%M:%S')}]:{LogOptions.END} {message}")
+    return input(f"{__parse_logoptions__(log_options)}[DSUTILS | {datetime.now().strftime('%H:%M:%S')}]:{__LogOptions__.END} {message}")
 
 
-def dsutils_input_options(message: str, options: list[str], log_options: list[LogOptions] = []):
+def dsutils_input_options(message: str, options: list[str], log_options: list[__LogOptions__] = []):
     """
     Prompts the user for input with a formatted message and a list of options.
 
@@ -127,7 +127,7 @@ def dsutils_input_options(message: str, options: list[str], log_options: list[Lo
     ------
         message (str): The message to display.
         options (list[str]): A list of options to display.
-        log_options (list[LogOptions], optional): A list of formatting log_options. Defaults to [].
+        log_options (list[__LogOptions__], optional): A list of formatting log_options. Defaults to [].
 
     Returns:
     ------
@@ -156,13 +156,13 @@ def dsutils_input_options(message: str, options: list[str], log_options: list[Lo
             awnser = dsutils_input(message, log_options)
 
 
-def dsutils_input_yes_no(message: str, log_options: list[LogOptions] = []):
+def dsutils_input_yes_no(message: str, log_options: list[__LogOptions__] = []):
     """
     Prompts the user for a yes or no response.
 
     Args:
         message (str): The message to display.
-        log_options (list[LogOptions], optional): A list of formatting log_options. Defaults to [].
+        log_options (list[__LogOptions__], optional): A list of formatting log_options. Defaults to [].
 
     Returns:
         bool: True if the user responds with 'y', False if the user responds with 'n'.
