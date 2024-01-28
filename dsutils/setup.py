@@ -1,5 +1,9 @@
-import sys
-import os
+# Add the dsutils directory to the path so that we can import from it when running this file directly
+import os, sys
+if __name__ == "__main__":
+    dsutils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    sys.path.insert(0, dsutils_path)
+
 from dsutils.internals import *
 from dsutils.create_files_and_folders import create_files_and_folders, __get_files_and_folders_from_json__, __remove_files_and_folders__
 import argparse
@@ -56,7 +60,7 @@ def setup():
     args = parser.parse_args()
     PROJECT_ROOT = args.projectroot
 
-    dsutils_success(DSUTILS_START)
+    dsutils_info(DSUTILS_START)
 
     try:
         #region Parse project root directory

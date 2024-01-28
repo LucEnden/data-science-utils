@@ -1,5 +1,10 @@
-from dsutils.internals import *
+# Add the dsutils directory to the path so that we can import from it when running this file directly
 import os, sys
+if __name__ == "__main__":
+    dsutils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    sys.path.insert(0, dsutils_path)
+
+from dsutils.internals import *
 import argparse
 from urllib.parse import urlparse
 
