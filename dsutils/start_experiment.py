@@ -183,7 +183,7 @@ def start_experiment(name: str | None = None, description: str | None = None):
         else:
             joined_errors = name_errors + description_errors
             if len(joined_errors) > 0:
-                raise ValueError(f"Invalid argument values:\n{'\n'.join(joined_errors)}")
+                raise ValueError("Invalid argument values:\n"+ '\n'.join(joined_errors))
             
         dir_name = NAME
         notebook_name = dir_name + ".ipynb"

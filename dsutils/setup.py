@@ -1,11 +1,31 @@
-from .internals import *
-from .create_files_and_folders import create_files_and_folders, __get_files_and_folders__, __remove_files_and_folders__
-import os, sys
+import sys
+import os
+from dsutils.internals import *
+from dsutils.create_files_and_folders import create_files_and_folders, __get_files_and_folders_from_json__, __remove_files_and_folders__
 import argparse
 
 
 PROJECT_ROOT = None
 CREATED_FILES_AND_FOLDERS_CALLED = False
+
+DSUTILS_START = """
+#===========================================================#
+#                                                           #
+#   Welcome to DSUtils!                                     #
+#                                                           #
+#   This setup will guide you through the process of        #
+#   setting up DSUtils for your project.                    #
+#                                                           #
+#===========================================================#
+"""
+DSUTILS_FINISHED = """
+#===========================================================#
+#                                                           #
+#   Setup completed successfully!                           #
+#   Happy coding!                                           #
+#                                                           #
+#===========================================================#
+"""
 
 
 def __cleanup__():
@@ -35,6 +55,8 @@ def setup():
     parser.add_argument('-p', '--projectroot', default=None, help='The path (relative or absolute) to the root directory of the project you want to use DSUtils with.')
     args = parser.parse_args()
     PROJECT_ROOT = args.projectroot
+
+    dsutils_success(DSUTILS_START)
 
     try:
         #region Parse project root directory
@@ -68,11 +90,14 @@ def setup():
             dsutils_warn("This probably means that DSUtils has already been setup for this project.")
             dsutils_warn("Continuing will overwrite the existing environment file.")
             awnser = dsutils_input_yes_no("Continue? (y/n): ")
+            dsutils_warn(awnser)
 
             if not awnser:
-                dsutils_info("Exiting...")
+                dsutils_warn("Not overwriting environment file.")
+                dsutils_warn("Exiting setup.")
                 sys.exit(0)
             else:
+                dsutils_warn("Overwriting environment file.")
                 os.remove(env_file_path)
         #endregion
                 
@@ -86,7 +111,7 @@ def setup():
             ("PROJECT_ROOT", PROJECT_ROOT),
             ("PROJECT_NAME", os.path.basename(PROJECT_ROOT))
         ]
-        for key, value in zip(__get_files_and_folders__(PROJECT_ROOT), created_paths):
+        for key, value in zip(__get_files_and_folders_from_json__(PROJECT_ROOT), created_paths):
             if key != "env_file":
                 env_vars.append((str(key).upper(), value.replace(PROJECT_ROOT, "")))
 
@@ -100,6 +125,8 @@ def setup():
         #endregion
 
         # TODO: Update gitignore
+
+        dsutils_success(DSUTILS_FINISHED)
             
     except KeyboardInterrupt:
         dsutils_error("KeyboardInterrupt")

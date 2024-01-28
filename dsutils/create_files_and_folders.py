@@ -1,9 +1,9 @@
-from .internals import *
+from dsutils.internals import *
 import os
 import json
 
 
-def __get_files_and_folders__(project_root: str | None = None):
+def __get_files_and_folders_from_json__(project_root: str | None = None):
     """
     Returns a dictionary of the files and folders that need to be created.
 
@@ -49,10 +49,23 @@ def __remove_files_and_folders__(project_root: str | None = None):
     This function is not meant to be called by the user. It is only meant to be called by the `__main__` function of this script or in the `dsutils/setup.py` file.
     Use at your own risk.
     """
+
     if project_root is None:
         project_root = dsutils_get_project_root()
+    elif not os.path.exists(project_root) or not os.path.isdir(project_root):
+        dsutils_error(f"Project root does not exist or is not a directory: {project_root}")
+        dsutils_error("Please enter a valid project root.")
+        dsutils_error("Aborting...")
+        sys.exit(1)
 
-    files_and_folders = __get_files_and_folders__(project_root)
+    files_and_folders = __get_files_and_folders_from_json__(project_root)
+    # Sort the files and folders such that:
+    # 1. Files are removed before folders
+    # 2. Files and folders are removed from the deepest path to the shallowest path
+    # Deepest meaning the path with the most subdirectories, i.e. path with the most os.sep
+    files_and_folders = {
+        k: v for k, v in sorted(files_and_folders.items(), key=lambda item: (not item[1]["isFile"], item[1]["path"].count(os.sep)), reverse=True)
+    }
 
     dsutils_warn("Removing files and folders...")
     for f in files_and_folders:
@@ -83,14 +96,14 @@ def create_files_and_folders(project_root: str | None = None):
     if project_root is None:
         project_root = dsutils_get_project_root()
 
-    files_and_folders = __get_files_and_folders__(project_root)
+    files_and_folders = __get_files_and_folders_from_json__(project_root)
     paths: list[str] = []
 
     try:
         dsutils_info("Creating files and folders...")
         for f in files_and_folders:
             if os.path.isfile(files_and_folders[f]['path']) or os.path.isdir(files_and_folders[f]['path']):
-                dsutils_warn(f"\t{files_and_folders[f]["path"]} (already exists)")
+                dsutils_warn(f"\t{files_and_folders[f]['path']} (already exists)")
             else:
                 if bool(files_and_folders[f]['isFile']):
                     if isinstance(files_and_folders[f]['fileContents'], list):

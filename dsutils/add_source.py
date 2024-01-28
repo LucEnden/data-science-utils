@@ -195,7 +195,7 @@ def add_source(name: str | None = None, description: str | None = None, url: str
     else:
         joined_errors = name_errors + description_errors + url_errors + citation_errors
         if len(joined_errors) > 0:
-            raise ValueError(f"Invalid argument values:\n{'\n'.join(joined_errors)}")
+            raise ValueError("Invalid argument values:\n" + '\n'.join(joined_errors))
         
     existing_sources = dsutils_get_sources_file_content()
     new_id = 0
