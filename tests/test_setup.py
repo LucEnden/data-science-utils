@@ -4,7 +4,6 @@ from dsutils.setup import setup as dsutils_setup
 import json
 import os
 import shutil
-import subprocess
 
 
 JSON_DATA_FILE = os.path.abspath(os.path.dirname(__file__) + '/../dsutils/files_and_folders.json')
