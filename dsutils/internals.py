@@ -197,7 +197,7 @@ def dsutils_read_env(project_root: str = os.getcwd()):
 
     env = project_root + ENV_FILE.replace("/", os.sep)
     if not os.path.isfile(env):
-        dsutils_error("Environment file does not exist.")
+        dsutils_error(f"Environment file does not exist:{env}")
         dsutils_error("This probably means that DSUtils has not been setup for this project.")
         dsutils_error("Please run the DSUtils setup script before continuing.")
         dsutils_error("Exiting...")
